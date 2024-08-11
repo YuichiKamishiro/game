@@ -1,10 +1,13 @@
+mod animations;
+
+use crate::animations as anim;
 use macroquad::prelude::*;
 
-const STARS_COUNT: i32 = 20;
+const STARS_COUNT: i32 = 35;
 const STAR_RADIUS: f32 = 3.0;
 const WIDTH: f32 = 800.;
 const HEIGHT: f32 = 600.;
-const STAR_UPDATE_DUR_SEC: f32 = 0.1;
+const STAR_UPDATE_DUR_SEC: f32 = 0.07;
 
 fn update_stars(timer: &mut f32, stars: &mut Vec<(f32, f32)>) {
     if *timer >= STAR_UPDATE_DUR_SEC {
@@ -28,12 +31,29 @@ async fn main() {
     let mut timer = 0.;
     let mut stars: Vec<(f32, f32)> = vec![(0., 0.,); STARS_COUNT as usize];
 
+    let mut animator = anim::Animator::new(); // Create animator
+    animator.load("sprite.png").await; // Load spritesheet
+
+    let frames = vec![
+        (Rect::new(0., 0., 120., 80.), 0.5),
+        (Rect::new(120., 0., 120., 80.), 0.1),
+        (Rect::new(240., 0., 120., 80.), 0.1),
+        (Rect::new(360., 0., 120., 80.), 0.3),
+    ];
+
+    animator.add_frames(frames);
+    // Add frames
+
     loop {
         clear_background(BLACK);
 
+        // Update clock
         timer = timer + get_frame_time();
 
+        // Update stars position
         update_stars(&mut timer, &mut stars);
+
+        // Draw
         draw_stars(&stars);
 
         next_frame().await
