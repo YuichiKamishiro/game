@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 pub struct SpriteSheet {
-    texture: Texture2D,
+    pub texture: Texture2D,
 }
 
 impl SpriteSheet {
@@ -19,10 +19,10 @@ impl SpriteSheet {
 }
 
 pub struct Animator {
-    sprite_sheet: SpriteSheet,
-    current_time: f32,
-    current_frame: usize,
-    rects: Vec<(Rect, f32)>,
+    pub sprite_sheet: SpriteSheet,
+    pub current_time: f32,
+    pub current_frame: usize,
+    pub rects: Vec<(Rect, f32)>,
 }
 
 impl Animator {
@@ -60,6 +60,18 @@ impl Animator {
         }
         draw_texture_ex(&self.sprite_sheet.texture, x, y, WHITE, DrawTextureParams {
             source: Some(self.rects[self.current_frame].0),
+            ..Default::default()
+        });
+    }
+
+    pub fn draw_scaled(&self, x: f32, y: f32, scale_x: f32, scale_y: f32) {
+        if self.rects.is_empty() {
+            println!("Error frames weren't added, make sure you called add_frames() func");
+            return;
+        }
+        draw_texture_ex(&self.sprite_sheet.texture, x, y, WHITE, DrawTextureParams {
+            source: Some(self.rects[self.current_frame].0),
+            dest_size: Some(Vec2::new(scale_x, scale_y)),
             ..Default::default()
         });
     }
