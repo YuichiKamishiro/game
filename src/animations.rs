@@ -63,16 +63,4 @@ impl Animator {
             ..Default::default()
         });
     }
-
-    pub fn draw_scaled(&self, x: f32, y: f32, scale_x: f32, scale_y: f32) {
-        if self.rects.is_empty() {
-            println!("Error frames weren't added, make sure you called add_frames() func");
-            return;
-        }
-        draw_texture_ex(&self.sprite_sheet.texture, x, y, WHITE, DrawTextureParams {
-            source: Some(self.rects[self.current_frame].0),
-            dest_size: Some(Vec2::new(scale_x, scale_y)),
-            ..Default::default()
-        });
-    }
 }

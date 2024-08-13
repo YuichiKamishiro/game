@@ -12,7 +12,7 @@ use macroquad::prelude::*;
 #[macroquad::main("Simple Game")]
 async fn main() {
     // Set screen size
-    request_new_screen_size(800., 600.);
+    request_new_screen_size(500., 600.);
 
     let mut stars_spawner = Stars::new();
     let mut enemies_spawner = Enemies::new();
@@ -22,16 +22,15 @@ async fn main() {
         clear_background(BLACK);
 
         // Stars
-        stars_spawner.update_stars();
-        stars_spawner.draw_stars();
+        stars_spawner.update();
+        stars_spawner.draw();
 
         // Enemies
-        enemies_spawner.spawn_enemies().await;
-        enemies_spawner.update_enemies();
-        enemies_spawner.draw_enemies();
+        enemies_spawner.update().await;
+        enemies_spawner.draw();
 
         // Hero
-        hero.update();
+        hero.update().await;
         hero.draw();
 
         next_frame().await

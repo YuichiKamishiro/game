@@ -15,7 +15,7 @@ impl Stars {
     }
 
     // Update stars position
-    pub fn update_stars(&mut self) {
+    pub fn update(&mut self) {
         self.stars_timer = self.stars_timer + get_frame_time();
         if self.stars_timer >= STAR_UPDATE_DUR_SEC {
             self.stars_timer = 0.;
@@ -28,7 +28,7 @@ impl Stars {
     }
 
     // Draw stars
-    pub fn draw_stars(&self) {
+    pub fn draw(&self) {
         for i in 0..STARS_COUNT {
             draw_circle(self.stars[i as usize].0, self.stars[i as usize].1, STAR_RADIUS, WHITE);
         }
