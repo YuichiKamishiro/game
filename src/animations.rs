@@ -44,7 +44,7 @@ impl Animator {
         self.current_time = self.current_time + get_frame_time();
 
         if self.current_time >= self.rects[self.current_frame].1 {
-            self.current_time = self.current_time - self.rects[self.current_frame].1;
+            self.current_time = 0.;
             self.current_frame = self.current_frame + 1;
         }
 
