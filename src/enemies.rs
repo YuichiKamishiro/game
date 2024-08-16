@@ -41,7 +41,7 @@ impl Enemies {
     }
 
     fn update_spawn_time(&mut self) {
-        self.enemies_spawn_time_per_sec = 2.0 - (get_time() as f32 / 20.);
+        self.enemies_spawn_time_per_sec = 2.0 - (get_time() as f32 / 5.);
     }
 
     // Update enemies and draw them

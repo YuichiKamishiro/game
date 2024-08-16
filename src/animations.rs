@@ -1,4 +1,6 @@
 use macroquad::prelude::*;
+
+#[derive(Clone)]
 pub struct SpriteSheet {
     pub texture: Texture2D,
 }
@@ -18,6 +20,7 @@ impl SpriteSheet {
     }
 }
 
+#[derive(Clone)]
 pub struct Animator {
     pub sprite_sheet: SpriteSheet,
     pub current_time: f32,

@@ -1,5 +1,6 @@
 use macroquad::prelude::*;
 use crate::animations as anim;
+use std::rc::Rc;
 
 pub struct Hero {
     pub bullets: Vec<(f32, f32, anim::Animator)>,
@@ -40,7 +41,7 @@ impl Hero {
     }
 
     async fn input(&mut self) {
-        if is_mouse_button_down(MouseButton::Left) && self.bullets_timer >= 0.3 {
+        if is_mouse_button_down(MouseButton::Left) && self.bullets_timer >= 0.1 {
             self.bullets_timer = 0.;
 
             let mut animator = anim::Animator::new(); // Create animator
