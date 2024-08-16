@@ -2,7 +2,7 @@ use macroquad::prelude::*;
 use crate::animations as anim;
 
 pub struct Hero {
-    bullets: Vec<(f32, f32, anim::Animator)>,
+    pub bullets: Vec<(f32, f32, anim::Animator)>,
     bullets_timer: f32,
     hero: anim::Animator,
 }
