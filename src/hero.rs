@@ -3,7 +3,7 @@ use crate::animations as anim;
 use std::rc::Rc;
 
 pub struct Hero {
-    pub bullets: Vec<(f32, f32, anim::Animator)>,
+    pub bullets: Vec<(f32, f32, anim::Animator, bool)>,
     bullets_timer: f32,
     hero: anim::Animator,
 }
@@ -60,6 +60,7 @@ impl Hero {
                 mouse_position().0, 
                 mouse_position().1 - sprite_rect.h / 2. - 40.,
                 animator,
+                true
             ));
         }
     }

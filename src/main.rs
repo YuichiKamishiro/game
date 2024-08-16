@@ -25,26 +25,33 @@ async fn main() {
     loop {
         clear_background(BLACK);
 
-        let mut indices_to_remove = Vec::new();
-        for (indexi, i) in hero.bullets.iter().enumerate() {
-            for (indexj, j) in enemies_spawner.enemies.iter().enumerate() {
+        for i in 0..hero.bullets.len() {
+            for j in 0..enemies_spawner.enemies.len() {
+                let i = &mut hero.bullets[i];
+                let j = &mut enemies_spawner.enemies[j];
+
                 let bullet_rect = i.2.rects[i.2.current_frame as usize].0;
                 let enemie_rect = j.2.rects[j.2.current_frame as usize].0;
  
                 let bullet_rect = Rect::new(i.0, i.1, bullet_rect.w, bullet_rect.h);
                 let enemie_rect = Rect::new(j.0, j.1, enemie_rect.w, enemie_rect.h);
                 
-                if is_collision(bullet_rect, enemie_rect) == true {
-                    indices_to_remove.push((indexi, indexj));
+                if is_collision(bullet_rect, enemie_rect) == true && i.3 == true && j.3 == true {
+                    i.3 = false;
+                    j.3 = false;
                 }
             }
         }
-        indices_to_remove.sort_unstable_by_key(|&(i, j)| (i, j));
-        indices_to_remove.reverse();
-        for (i, j) in indices_to_remove{
-            hero.bullets.remove(i);
-    
-            enemies_spawner.enemies.remove(j);    
+        
+        for i in (0..hero.bullets.len()).rev() {
+            if hero.bullets[i].3 == false {
+                hero.bullets.remove(i);
+            }
+        }
+        for j in (0..enemies_spawner.enemies.len()).rev() {
+            if enemies_spawner.enemies[j].3 == false {
+                enemies_spawner.enemies.remove(j);
+            }
         }
 
         // Stars

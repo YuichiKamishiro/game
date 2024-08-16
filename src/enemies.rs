@@ -2,7 +2,7 @@ use macroquad::prelude::*;
 use crate::animations as anim;
 
 pub struct Enemies {
-    pub enemies: Vec<(f32, f32, anim::Animator)>,
+    pub enemies: Vec<(f32, f32, anim::Animator, bool)>,
     enemies_timer: f32,
     enemies_spawn_time_per_sec: f32,
 }
@@ -31,7 +31,7 @@ impl Enemies {
             ];
         
             enemy.add_frames(frames);
-            self.enemies.push((rand_x, -50., enemy))
+            self.enemies.push((rand_x, -50., enemy, true))
         }
     }
     fn change_position(&mut self) {
