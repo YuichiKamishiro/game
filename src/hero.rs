@@ -44,20 +44,20 @@ impl Hero {
             self.bullets_timer = 0.;
 
             let mut animator = anim::Animator::new(); // Create animator
-            animator.load("Bullets.png").await; // Load spritesheet
+            animator.load("Bullet.png").await; // Load spritesheet
     
             let frames = vec![
-                (Rect::new(0., 0., 36., 52.), 0.1),
-                (Rect::new(37., 0., 36., 52.), 0.1),
-                (Rect::new(74., 0., 36., 52.), 0.1),
+                (Rect::new(0., 0., 8., 19.), 0.1),
+                (Rect::new(0., 0., 8., 19.), 0.1),
+                (Rect::new(0., 0., 8., 19.), 0.1),
             ];
     
             animator.add_frames(frames);
 
             let sprite_rect: Rect = self.hero.rects[self.hero.current_frame].0;   
             self.bullets.push((
-                mouse_position().0 - sprite_rect.w / 2., 
-                mouse_position().1 - sprite_rect.h / 2. - 70.,
+                mouse_position().0, 
+                mouse_position().1 - sprite_rect.h / 2. - 40.,
                 animator,
             ));
         }
