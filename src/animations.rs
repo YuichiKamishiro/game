@@ -20,21 +20,31 @@ impl SpriteSheet {
     }
 }
 
+#[derive(Clone, PartialEq)]
+pub enum AnimationState{
+    Loop,
+    Once,
+}
+
 #[derive(Clone)]
 pub struct Animator {
     pub sprite_sheet: SpriteSheet,
     pub current_time: f32,
     pub current_frame: usize,
     pub rects: Vec<(Rect, f32)>,
+    state: AnimationState,
+    pub is_animatin_stopped: bool,
 }
 
 impl Animator {
-    pub fn new() -> Self {
+    pub fn new(state: AnimationState) -> Self {
         Animator {
             sprite_sheet: SpriteSheet::new(),
             current_time: 0.,
             current_frame: 0,
             rects: Vec::new(),
+            state,
+            is_animatin_stopped: false
         }
     }
     pub async fn load(&mut self, path: &str) {
@@ -44,17 +54,18 @@ impl Animator {
         self.rects = rects;
     }
     pub fn update(&mut self) {
-        self.current_time = self.current_time + get_frame_time();
+        if !self.is_animatin_stopped {
+            self.current_time = self.current_time + get_frame_time();
 
-        if self.current_time >= self.rects[self.current_frame].1 {
-            self.current_time = 0.;
-            self.current_frame = self.current_frame + 1;
+            if self.current_time >= self.rects[self.current_frame].1 {
+                self.current_time = 0.;
+                self.current_frame = self.current_frame + 1;
+            }
+            if self.current_frame == self.rects.len() {
+                if self.state == AnimationState::Once { self.is_animatin_stopped = true; }
+                self.current_frame = 0;
+            }
         }
-
-        if self.current_frame == self.rects.len() {
-            self.current_frame = 0;
-        }
-        
     }
     pub fn draw(&self, x: f32, y: f32) {
         if self.rects.is_empty() {

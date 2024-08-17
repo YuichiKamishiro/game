@@ -10,7 +10,7 @@ pub struct Hero {
 
 impl Hero {
     pub async fn new() -> Self {
-        let mut animator = anim::Animator::new(); // Create animator
+        let mut animator = anim::Animator::new(anim::AnimationState::Loop); // Create animator
         animator.load("SpaceshipKit.png").await; // Load spritesheet
 
         let frames = vec![
@@ -41,10 +41,10 @@ impl Hero {
     }
 
     async fn input(&mut self) {
-        if is_mouse_button_down(MouseButton::Left) && self.bullets_timer >= 0.1 {
+        if is_mouse_button_down(MouseButton::Left) && self.bullets_timer >= 0.3 {
             self.bullets_timer = 0.;
 
-            let mut animator = anim::Animator::new(); // Create animator
+            let mut animator = anim::Animator::new(anim::AnimationState::Loop); // Create animator
             animator.load("Bullet.png").await; // Load spritesheet
     
             let frames = vec![

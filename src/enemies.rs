@@ -21,7 +21,7 @@ impl Enemies {
         if self.enemies_timer >=  self.enemies_spawn_time_per_sec{
             self.enemies_timer = 0.;
             let rand_x: f32 = rand::gen_range(20., screen_width() - 20.);
-            let mut enemy = anim::Animator::new();
+            let mut enemy = anim::Animator::new(anim::AnimationState::Loop);
             enemy.load("EnemiesSpaceshipKit.png").await;
 
             let frames = vec![
@@ -41,7 +41,7 @@ impl Enemies {
     }
 
     fn update_spawn_time(&mut self) {
-        self.enemies_spawn_time_per_sec = 2.0 - (get_time() as f32 / 5.);
+        self.enemies_spawn_time_per_sec = 2.0 - (get_time() as f32 / 20.);
     }
 
     // Update enemies and draw them

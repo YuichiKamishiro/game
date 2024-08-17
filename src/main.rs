@@ -1,16 +1,21 @@
-mod hero;
 mod animations;
-mod stars;
 mod enemies;
+mod hero;
+mod particles;
+mod stars;
 
-use crate::stars::Stars;
 use crate::enemies::Enemies;
 use crate::hero::Hero;
+use crate::stars::Stars;
+use crate::particles::Particles;
 
 use macroquad::prelude::*;
 
 fn is_collision(rect1: macroquad::math::Rect, rect2: macroquad::math::Rect) -> bool {
-    rect1.x < rect2.x + rect2.w && rect1.x + rect1.w > rect2.x && rect1.y < rect2.y + rect2.h && rect1.y + rect1.h > rect2.y
+    rect1.x < rect2.x + rect2.w
+        && rect1.x + rect1.w > rect2.x
+        && rect1.y < rect2.y + rect2.h
+        && rect1.y + rect1.h > rect2.y
 }
 
 #[macroquad::main("Simple Game")]
@@ -21,38 +26,31 @@ async fn main() {
     let mut stars_spawner = Stars::new();
     let mut enemies_spawner = Enemies::new();
     let mut hero = Hero::new().await;
+    let mut particles = Particles::new();
 
     loop {
         clear_background(BLACK);
 
-        for i in 0..hero.bullets.len() {
-            for j in 0..enemies_spawner.enemies.len() {
-                let i = &mut hero.bullets[i];
-                let j = &mut enemies_spawner.enemies[j];
+        for bullet in hero.bullets.iter_mut() {
+            for enemy in enemies_spawner.enemies.iter_mut() {
+                let bullet_rect = bullet.2.rects[bullet.2.current_frame as usize].0;
 
-                let bullet_rect = i.2.rects[i.2.current_frame as usize].0;
-                let enemie_rect = j.2.rects[j.2.current_frame as usize].0;
- 
-                let bullet_rect = Rect::new(i.0, i.1, bullet_rect.w, bullet_rect.h);
-                let enemie_rect = Rect::new(j.0, j.1, enemie_rect.w, enemie_rect.h);
-                
-                if is_collision(bullet_rect, enemie_rect) == true && i.3 == true && j.3 == true {
-                    i.3 = false;
-                    j.3 = false;
+                let enemy_rect = enemy.2.rects[enemy.2.current_frame as usize].0;
+
+                let bullet_rect = Rect::new(bullet.0, bullet.1, bullet_rect.w, bullet_rect.h);
+
+                let enemy_rect = Rect::new(enemy.0, enemy.1, enemy_rect.w, enemy_rect.h);
+
+                if is_collision(bullet_rect, enemy_rect) && bullet.3 && enemy.3 {
+                    bullet.3 = false;
+                    enemy.3 = false;
+                    particles.spawn(bullet_rect.x, bullet_rect.y).await;
                 }
             }
         }
-        
-        for i in (0..hero.bullets.len()).rev() {
-            if hero.bullets[i].3 == false {
-                hero.bullets.remove(i);
-            }
-        }
-        for j in (0..enemies_spawner.enemies.len()).rev() {
-            if enemies_spawner.enemies[j].3 == false {
-                enemies_spawner.enemies.remove(j);
-            }
-        }
+
+        hero.bullets.retain(|bullet| bullet.3);
+        enemies_spawner.enemies.retain(|enemy| enemy.3);
 
         // Stars
         stars_spawner.update();
@@ -65,6 +63,10 @@ async fn main() {
         // Hero
         hero.update().await;
         hero.draw();
+
+        // Particles
+        particles.draw();
+        particles.update().await;
 
         next_frame().await
     }
