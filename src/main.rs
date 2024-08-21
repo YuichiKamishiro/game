@@ -32,22 +32,26 @@ async fn main() {
         clear_background(BLACK);
 
         for bullet in hero.bullets.iter_mut() {
-            for enemy in enemies_spawner.enemies.iter_mut() {
-                let bullet_rect = bullet.2.rects[bullet.2.current_frame as usize].0;
+        for enemy in enemies_spawner.enemies.iter_mut() {
+            let bullet_rect = bullet.2.rects[bullet.2.current_frame as usize].0;
+            let enemy_rect = enemy.2.rects[enemy.2.current_frame as usize].0;
+            
+            let bullet_rect = Rect::new(
+                bullet.0, bullet.1,
+                bullet_rect.w, bullet_rect.h,
+            );
 
-                let enemy_rect = enemy.2.rects[enemy.2.current_frame as usize].0;
-
-                let bullet_rect = Rect::new(bullet.0, bullet.1, bullet_rect.w, bullet_rect.h);
-
-                let enemy_rect = Rect::new(enemy.0, enemy.1, enemy_rect.w, enemy_rect.h);
-
-                if is_collision(bullet_rect, enemy_rect) && bullet.3 && enemy.3 {
-                    bullet.3 = false;
-                    enemy.3 = false;
-                    particles.spawn(bullet_rect.x, bullet_rect.y).await;
-                }
+            let enemy_rect = Rect::new(
+                enemy.0, enemy.1, 
+                enemy_rect.w, enemy_rect.h,
+            );
+            
+            if is_collision(bullet_rect, enemy_rect) && bullet.3 && enemy.3 {
+                particles.spawn(bullet_rect.x, bullet_rect.y).await;
+                bullet.3 = false;
+                enemy.3 = false;
             }
-        }
+        }}
 
         hero.bullets.retain(|bullet| bullet.3);
         enemies_spawner.enemies.retain(|enemy| enemy.3);

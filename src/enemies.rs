@@ -1,10 +1,12 @@
+use crate::animations::{AnimationState, Animator};
 use macroquad::prelude::*;
-use crate::animations as anim;
+
+static mut SPAWN_PER_TICK: i32 = 2;
+static mut TICK_TIME: f32 = 2.;
 
 pub struct Enemies {
-    pub enemies: Vec<(f32, f32, anim::Animator, bool)>,
+    pub enemies: Vec<(f32, f32, Animator, bool)>,
     enemies_timer: f32,
-    enemies_spawn_time_per_sec: f32,
 }
 
 impl Enemies {
@@ -12,26 +14,35 @@ impl Enemies {
         Self {
             enemies: vec![],
             enemies_timer: 0.,
-            enemies_spawn_time_per_sec: 2., 
         }
     }
 
     pub async fn spawn(&mut self) {
         self.enemies_timer = self.enemies_timer + get_frame_time();
-        if self.enemies_timer >=  self.enemies_spawn_time_per_sec{
+        if self.enemies_timer >= unsafe { TICK_TIME } {
+            self.update_difficulty();
             self.enemies_timer = 0.;
-            let rand_x: f32 = rand::gen_range(20., screen_width() - 20.);
-            let mut enemy = anim::Animator::new(anim::AnimationState::Loop);
-            enemy.load("EnemiesSpaceshipKit.png").await;
 
-            let frames = vec![
-                (Rect::new(0., 0., 36., 52.), 0.1),
-                (Rect::new(37., 0., 36., 52.), 0.1),
-                (Rect::new(74., 0., 36., 52.), 0.1),
-            ];
-        
-            enemy.add_frames(frames);
-            self.enemies.push((rand_x, -50., enemy, true))
+            let mut texture = Texture2D::empty();
+            match load_texture("img/EnemiesSpaceshipKit.png").await {
+                Ok(text) => texture = text,
+                Err(err) => println!("Error while loading texture: {err}"),
+            }
+
+            for _ in 0..unsafe {SPAWN_PER_TICK} {
+                let rand_x: f32 = rand::gen_range(20., screen_width() - 20.);
+                let mut enemy = Animator::new(AnimationState::Loop);
+                enemy.load_from(texture.clone());
+
+                let frames = vec![
+                    (Rect::new(0., 0., 36., 52.), 0.1),
+                    (Rect::new(37., 0., 36., 52.), 0.1),
+                    (Rect::new(74., 0., 36., 52.), 0.1),
+                ];
+
+                enemy.add_frames(frames);
+                self.enemies.push((rand_x, -50., enemy, true));
+            }
         }
     }
     fn change_position(&mut self) {
@@ -40,13 +51,14 @@ impl Enemies {
         }
     }
 
-    fn update_spawn_time(&mut self) {
-        self.enemies_spawn_time_per_sec = 2.0 - (get_time() as f32 / 20.);
+    fn update_difficulty(&mut self) {
+        unsafe {
+            SPAWN_PER_TICK = 2 + (get_time() / 8.) as i32;
+        }
     }
 
     // Update enemies and draw them
     pub async fn update(&mut self) {
-        self.update_spawn_time();
         self.spawn().await;
         self.change_position();
 

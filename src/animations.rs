@@ -18,6 +18,10 @@ impl SpriteSheet {
             Err(err) => println!("Error while loading texture: {err}"),
         }
     }
+    
+    pub fn load_from(&mut self, texture: Texture2D) {
+        self.texture = texture;
+    }
 }
 
 #[derive(Clone, PartialEq)]
@@ -48,7 +52,10 @@ impl Animator {
         }
     }
     pub async fn load(&mut self, path: &str) {
-        self.sprite_sheet.load(path).await
+        self.sprite_sheet.load(path).await;
+    }
+    pub fn load_from(&mut self, texture: Texture2D) {
+        self.sprite_sheet.load_from(texture);
     }
     pub fn add_frames(&mut self, rects: Vec<(Rect, f32)>) {
         self.rects = rects;

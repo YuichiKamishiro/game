@@ -1,17 +1,16 @@
 use macroquad::prelude::*;
-use crate::animations as anim;
-use std::rc::Rc;
+use crate::animations::{AnimationState, Animator};
 
 pub struct Hero {
-    pub bullets: Vec<(f32, f32, anim::Animator, bool)>,
+    pub bullets: Vec<(f32, f32, Animator, bool)>,
     bullets_timer: f32,
-    hero: anim::Animator,
+    hero: Animator,
 }
 
 impl Hero {
     pub async fn new() -> Self {
-        let mut animator = anim::Animator::new(anim::AnimationState::Loop); // Create animator
-        animator.load("SpaceshipKit.png").await; // Load spritesheet
+        let mut animator = Animator::new(AnimationState::Loop); // Create animator
+        animator.load("img/SpaceshipKit.png").await; // Load spritesheet
 
         let frames = vec![
             (Rect::new(0., 0., 36., 52.), 0.1),
@@ -41,11 +40,11 @@ impl Hero {
     }
 
     async fn input(&mut self) {
-        if is_mouse_button_down(MouseButton::Left) && self.bullets_timer >= 0.3 {
+        if is_mouse_button_down(MouseButton::Left) && self.bullets_timer >= 0.1 {
             self.bullets_timer = 0.;
 
-            let mut animator = anim::Animator::new(anim::AnimationState::Loop); // Create animator
-            animator.load("Bullet.png").await; // Load spritesheet
+            let mut animator = Animator::new(AnimationState::Loop); // Create animator
+            animator.load("img/Bullet.png").await; // Load spritesheet
     
             let frames = vec![
                 (Rect::new(0., 0., 8., 19.), 0.1),
@@ -83,7 +82,6 @@ impl Hero {
             self.bullets[i].2.update();
         }
 
-        
         self.hero.update();
     }
 }
