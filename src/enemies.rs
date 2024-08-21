@@ -57,8 +57,15 @@ impl Enemies {
         }
     }
 
+    fn check_position(&self) {
+        for (_, y, _, _) in self.enemies.iter() {
+            if *y >= screen_height() {std::process::exit(0);}
+        }
+    }
+
     // Update enemies and draw them
     pub async fn update(&mut self) {
+        self.check_position();
         self.spawn().await;
         self.change_position();
 
